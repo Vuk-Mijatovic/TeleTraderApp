@@ -3,18 +3,26 @@ package com.example.teletraderapp;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.os.Bundle;
+import android.util.Log;
+
+import java.util.ArrayList;
+import java.util.List;
 
 
 public class MainActivity extends AppCompatActivity {
+
+    List<Symbol> symbols = new ArrayList<>();
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        SymbolRepository repository = new SymbolRepository(this);
-        repository.fetchResponse();
+        
+
 
 
 
     }
+
 }
