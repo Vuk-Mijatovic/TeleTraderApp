@@ -3,18 +3,23 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     tools:context=".MainActivity">
+    <item
+        android:id="@+id/refresh"
+        android:title="Refresh"
+        android:icon="@drawable/ic_baseline_refresh_24"
+        app:showAsAction="ifRoom" />
 
     <item
         android:id="@+id/ascending"
-        android:title="Ascending"
+        android:title="@string/ascending"
         app:showAsAction="never" />
     <item
         android:id="@+id/descending"
-        android:title="Descending"
+        android:title="@string/descending"
         app:showAsAction="never" />
     <item
         android:id="@+id/unsorted"
-        android:title="Unsorted"
+        android:title="@string/unsorted"
         app:showAsAction="never" />
 
 </menu>

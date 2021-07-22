@@ -65,6 +65,7 @@ public class SymbolAdapter extends RecyclerView.Adapter<SymbolAdapter.SymbolView
         private TextView changeView;
         private TextView lastView;
 
+
         public SymbolViewHolder(@NonNull @NotNull View itemView) {
             super(itemView);
             this.nameView = itemView.findViewById(R.id.name);
