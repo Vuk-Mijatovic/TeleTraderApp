@@ -1,6 +1,7 @@
 package com.example.teletraderapp;
 
 import android.content.Context;
+import android.graphics.Color;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -36,11 +37,21 @@ public class SymbolAdapter extends RecyclerView.Adapter<SymbolAdapter.SymbolView
     public void onBindViewHolder(@NonNull @NotNull SymbolAdapter.SymbolViewHolder holder, int position) {
         currentSymbol = symbols.get(position);
         holder.nameView.setText(currentSymbol.getName());
-        if (currentSymbol.getChg() != Double.MIN_VALUE)
-            holder.changeView.setText(String.valueOf(currentSymbol.getChg()));
-        else holder.changeView.setText("-");
+        if (currentSymbol.getChg() != Double.MIN_VALUE) {
+            holder.changeView.setText(String.format("%.2f", (currentSymbol.getChg())) + "%");
+            if (currentSymbol.getChg() > 0) {
+                holder.changeView.setTextColor(Color.parseColor("#1faa00"));
+                holder.changeView.setText("+" + String.format("%.2f", (currentSymbol.getChg())) + "%");
+            }
+            else if (currentSymbol.getChg() < 0) holder.changeView.setTextColor(Color.RED);
+            else holder.changeView.setTextColor(Color.WHITE);
+        }
+        else {
+            holder.changeView.setText("-");
+            holder.changeView.setTextColor(Color.WHITE);
+        }
         if (currentSymbol.getLast() != Double.MIN_VALUE)
-            holder.lastView.setText(String.valueOf(currentSymbol.getLast()));
+            holder.lastView.setText(String.format("%.2f",(currentSymbol.getLast())));
         else holder.lastView.setText("-");
     }
 
