@@ -1,36 +1,49 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.appcompat.widget.LinearLayoutCompat xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
+
+<com.google.android.material.card.MaterialCardView xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_height="wrap_content"
-    android:orientation="horizontal"
-    android:paddingHorizontal="10dp">
+    android:layout_width="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    app:cardBackgroundColor="@color/black">
 
-    <TextView
-        android:layout_width="0dp"
+    <androidx.appcompat.widget.LinearLayoutCompat xmlns:tools="http://schemas.android.com/tools"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_weight="2"
-        android:maxLines="1"
-        android:textSize="20sp"
-        tools:text="UK 100 Index" />
+        android:orientation="horizontal">
 
-    <TextView
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_weight="2"
-        android:gravity="end"
-        android:maxLines="1"
-        android:textSize="20sp"
-        tools:text="+1.31%" />
+        <TextView
+            android:id="@+id/name"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="2"
+            android:paddingVertical="10dp"
+            android:maxLines="1"
+            android:textColor="#2196f3"
+            android:textSize="18sp"
+            tools:text="UK 100 Index" />
 
-    <TextView
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_weight="2"
-        android:gravity="end"
-        android:maxLines="1"
-        android:textSize="20sp"
-        tools:text="1988.66" />
+        <TextView
+            android:id="@+id/change"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:gravity="end"
+            android:maxLines="1"
+            android:textColor="@color/white"
+            android:textSize="18sp"
+            tools:text="+1.31%" />
 
+        <TextView
+            android:id="@+id/last"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:gravity="end"
+            android:maxLines="1"
+            android:textColor="@color/white"
+            android:textSize="18sp"
+            tools:text="1988.66" />
 
-</androidx.appcompat.widget.LinearLayoutCompat>
+    </androidx.appcompat.widget.LinearLayoutCompat>
+
+</com.google.android.material.card.MaterialCardView>

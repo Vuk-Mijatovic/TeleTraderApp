@@ -33,8 +33,8 @@ import javax.xml.parsers.ParserConfigurationException;
 public class SymbolRepository {
 
     private static final String XML_URL = "https://www.teletrader.rs/downloads/tt_symbol_list.xml";
-    RequestQueue requestQueue;
 
+    RequestQueue requestQueue;
 
     public List<Symbol> fetchResponse() throws IOException, SAXException, ParserConfigurationException {
         String name;
