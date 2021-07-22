@@ -5,12 +5,16 @@
     tools:context=".MainActivity">
 
     <item
-        android:id="@+id/chg_last"
-        android:title="Chg%, Last"
+        android:id="@+id/ascending"
+        android:title="Ascending"
         app:showAsAction="never" />
     <item
-        android:id="@+id/bid_ask"
-        android:title="Bid/Ask, High/Low"
+        android:id="@+id/descending"
+        android:title="Descending"
+        app:showAsAction="never" />
+    <item
+        android:id="@+id/unsorted"
+        android:title="Unsorted"
         app:showAsAction="never" />
 
 </menu>

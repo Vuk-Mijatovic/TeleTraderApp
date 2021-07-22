@@ -21,6 +21,8 @@ import org.xml.sax.SAXException;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
@@ -32,7 +34,7 @@ import javax.xml.parsers.ParserConfigurationException;
 public class MainActivity extends AppCompatActivity {
 
     List<Symbol> symbols = new ArrayList<>();
-
+    SymbolAdapter adapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -48,7 +50,7 @@ public class MainActivity extends AppCompatActivity {
             e.printStackTrace();
         }
         symbols = viewModel.getSymbols();
-        SymbolAdapter adapter = new SymbolAdapter(symbols);
+        adapter = new SymbolAdapter(symbols);
         RecyclerView recyclerView = findViewById(R.id.recyclerView);
         LinearLayoutManager layoutManager = new LinearLayoutManager(this);
         recyclerView.setLayoutManager(layoutManager);
@@ -65,13 +67,30 @@ public class MainActivity extends AppCompatActivity {
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
         switch (item.getItemId()) {
-            case R.id.chg_last:
+            case R.id.ascending:
+                Collections.sort(symbols, new Comparator<Symbol>() {
+                    @Override
+                    public int compare(Symbol o1, Symbol o2) {
+                        return o1.getName().compareToIgnoreCase(o2.getName());
+                    }
+                });
+                adapter.notifyDataSetChanged();
+
 
                 break;
-            case R.id.bid_ask:
-
+            case R.id.descending:
+                Collections.sort(symbols, new Comparator<Symbol>() {
+                    @Override
+                    public int compare(Symbol o1, Symbol o2) {
+                        return o2.getName().compareToIgnoreCase(o1.getName());
+                    }
+                });
+                adapter.notifyDataSetChanged();
+                break;
+            case R.id.unsorted:
+                Collections.shuffle(symbols);
+                adapter.notifyDataSetChanged();
         }
-
         return super.onOptionsItemSelected(item);
     }
 }
