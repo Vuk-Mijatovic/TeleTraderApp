@@ -25,12 +25,21 @@
             android:textColor="#2196f3"
             android:textSize="14sp"
             tools:text="DJI" />
+        <TextView
+            android:id="@+id/decorative_name"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:gravity="end"
+            android:textColor="#2196f3"
+            android:textSize="14sp"
+            tools:text="DJIndu" />
 
         <TextView
             android:id="@+id/stock_exchange_name"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
+            android:layout_weight="2"
             android:gravity="center_horizontal"
             android:textColor="#2196f3"
             android:textSize="14sp"
@@ -40,7 +49,7 @@
             android:id="@+id/currency"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
+            android:layout_weight="2"
             android:gravity="end"
             android:textColor="#2196f3"
             android:textSize="14sp"
@@ -77,7 +86,6 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="28dp"
-        android:layout_marginStart="10dp"
         android:textColor="@color/white"
         android:textSize="20sp"
         app:layout_constraintEnd_toEndOf="@+id/high_detail_view"
@@ -109,12 +117,12 @@
         android:id="@+id/change_value"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="10dp"
         android:layout_marginTop="92dp"
+        android:layout_marginStart="10dp"
         android:gravity="bottom"
         android:textColor="@color/white"
         android:textSize="20sp"
-        app:layout_constraintStart_toStartOf="@+id/low_detail_view"
+        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/low_detail_view"
         tools:text="+3810.00" />
 
@@ -123,7 +131,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:gravity="top"
-        android:text="Change"
+        android:text="@string/change"
         android:textColor="@color/white"
         android:textSize="16sp"
         app:layout_constraintStart_toStartOf="@+id/change_value"
@@ -146,7 +154,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:gravity="top"
-        android:text="Chg%"
+        android:text="@string/chg"
         android:textColor="@color/white"
         android:textSize="16sp"
         app:layout_constraintEnd_toEndOf="@+id/chg_percent_value"
@@ -174,5 +182,47 @@
         app:layout_constraintBottom_toBottomOf="@+id/last"
         app:layout_constraintEnd_toEndOf="parent"
         tools:text="Volume: 248068144" />
+
+    <TextView
+        android:id="@+id/last_lable"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:gravity="top"
+        android:textColor="#2196f3"
+        android:textSize="16sp"
+        app:layout_constraintStart_toStartOf="@+id/last"
+        app:layout_constraintTop_toBottomOf="@+id/last"
+        android:text="@string/last" />
+
+    <TextView
+        android:id="@+id/volume_labele"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:gravity="top"
+        android:textColor="#2196f3"
+        android:textSize="16sp"
+        app:layout_constraintEnd_toEndOf="@+id/volume"
+        app:layout_constraintTop_toBottomOf="@+id/volume"
+        android:text="@string/volume" />
+
+    <TextView
+        android:id="@+id/isin_label"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="10dp"
+        android:layout_marginTop="36dp"
+        android:text="@string/isin"
+        android:textColor="#2196f3"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/last_lable" />
+
+    <TextView
+        android:id="@+id/isin_value"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintBottom_toBottomOf="@+id/isin_label"
+        app:layout_constraintStart_toEndOf="@+id/isin_label"
+        android:textColor="@color/white"
+        tools:text="192092029342" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

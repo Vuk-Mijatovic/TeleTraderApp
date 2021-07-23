@@ -10,6 +10,8 @@ public class Symbol implements Parcelable {
     private String stockExchangeName;
     private String currency;
     private String dateAndTime;
+    private String decorativeName;
+    private String isin;
     private double chg;
     private double last;
     private double bid;
@@ -19,12 +21,17 @@ public class Symbol implements Parcelable {
     private double changePercent;
     private double volume;
 
+    public String getIsin() {
+        return isin;
+    }
+
     protected Symbol(Parcel in) {
         name = in.readString();
         tickerSymbol = in.readString();
         stockExchangeName = in.readString();
         currency = in.readString();
         dateAndTime = in.readString();
+        decorativeName = in.readString();
         chg = in.readDouble();
         last = in.readDouble();
         bid = in.readDouble();
@@ -33,6 +40,7 @@ public class Symbol implements Parcelable {
         low = in.readDouble();
         changePercent = in.readDouble();
         volume = in.readDouble();
+        isin = in.readString();
     }
 
     public static final Creator<Symbol> CREATOR = new Creator<Symbol>() {
@@ -98,13 +106,14 @@ public class Symbol implements Parcelable {
     }
 
 
-
-
+    public String getDecorativeName() {
+        return decorativeName;
+    }
 
     public Symbol(String name, double chg, double last, double bid,
                   double ask, double high, double low, String tickerSymbol,
                   String stockExchangeName, String currency,
-                  String dateAndTime, double changePercent, double volume) {
+                  String dateAndTime, double changePercent, double volume, String decorativeName, String isin) {
 
         this.name = name;
         this.chg = chg;
@@ -119,6 +128,8 @@ public class Symbol implements Parcelable {
         this.dateAndTime = dateAndTime;
         this.changePercent = changePercent;
         this.volume = volume;
+        this.decorativeName = decorativeName;
+        this.isin = isin;
     }
 
 
@@ -136,6 +147,7 @@ public class Symbol implements Parcelable {
         dest.writeString(stockExchangeName);
         dest.writeString(currency);
         dest.writeString(dateAndTime);
+        dest.writeString(decorativeName);
         dest.writeDouble(chg);
         dest.writeDouble(last);
         dest.writeDouble(bid);
@@ -144,5 +156,6 @@ public class Symbol implements Parcelable {
         dest.writeDouble(low);
         dest.writeDouble(changePercent);
         dest.writeDouble(volume);
+        dest.writeString(isin);
     }
 }

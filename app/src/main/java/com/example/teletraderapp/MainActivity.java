@@ -12,6 +12,8 @@ import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.os.Handler;
 import android.util.Log;
@@ -48,32 +50,41 @@ public class MainActivity extends AppCompatActivity implements SymbolAdapter.OnI
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        viewModel = new ViewModelProvider(this).get(SymbolsViewModel.class);
-        try {
-            viewModel.getList();
-        } catch (Exception e) {
-            //todo handle error
-            e.printStackTrace();
-        }
-        symbols = viewModel.getSymbols();
-        adapter = new SymbolAdapter(symbols, this);
-        recyclerView = findViewById(R.id.recyclerView);
-        LinearLayoutManager layoutManager = new LinearLayoutManager(this);
-        recyclerView.setLayoutManager(layoutManager);
-        new ItemTouchHelper(swipeCallback).attachToRecyclerView(recyclerView);
-        recyclerView.setAdapter(adapter);
-        swipeLayout = findViewById(R.id.swipe_container);
-        swipeLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
-            @Override
-            public void onRefresh() {
-                refreshData();
-                swipeLayout.setRefreshing(false);
-                //todo Check this code
+        ConnectivityManager cm =
+                (ConnectivityManager) getApplicationContext().getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo activeNetwork = cm.getActiveNetworkInfo();
+        boolean isConnected = activeNetwork != null &&
+                activeNetwork.isConnectedOrConnecting();
+        if (isConnected) {
+
+            viewModel = new ViewModelProvider(this).get(SymbolsViewModel.class);
+            try {
+                viewModel.getList();
+            } catch (Exception e) {
+                Toast.makeText(this, "Something went wrong, please try again later.", Toast.LENGTH_SHORT).show();
+                //TODO handle this error more elegantly
+                e.printStackTrace();
             }
-        });
+            symbols = viewModel.getSymbols();
+            adapter = new SymbolAdapter(symbols, this);
+            recyclerView = findViewById(R.id.recyclerView);
+            LinearLayoutManager layoutManager = new LinearLayoutManager(this);
+            recyclerView.setLayoutManager(layoutManager);
+            new ItemTouchHelper(swipeCallback).attachToRecyclerView(recyclerView);
+            recyclerView.setAdapter(adapter);
+            swipeLayout = findViewById(R.id.swipe_container);
+            swipeLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+                @Override
+                public void onRefresh() {
+                    refreshData();
+                    swipeLayout.setRefreshing(false);
+                }
+            });
+        } else Toast.makeText(this, "No internet connection. Please try later.", Toast.LENGTH_SHORT).show();
 
 
-    }
+
+}
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -128,16 +139,26 @@ public class MainActivity extends AppCompatActivity implements SymbolAdapter.OnI
     };
 
     private void refreshData() {
-        adapter = null;
-        try {
-            viewModel.getList();
-        } catch (Exception e) {
-            //todo handle error
-            e.printStackTrace();
+        ConnectivityManager cm =
+                (ConnectivityManager) getApplicationContext().getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo activeNetwork = cm.getActiveNetworkInfo();
+        boolean isConnected = activeNetwork != null &&
+                activeNetwork.isConnectedOrConnecting();
+        if (isConnected) {
+            adapter = null;
+            try {
+                viewModel.getList();
+            } catch (Exception e) {
+                Toast.makeText(this, "Something went wrong, please try again later.", Toast.LENGTH_SHORT).show();
+                //TODO handle this error better
+                e.printStackTrace();
+            }
+            symbols = viewModel.getSymbols();
+            adapter = new SymbolAdapter(symbols, this);
+            recyclerView.setAdapter(adapter);
+        } else {
+            Toast.makeText(this, "No internet connection. Please try later.", Toast.LENGTH_SHORT).show();
         }
-        symbols = viewModel.getSymbols();
-        adapter = new SymbolAdapter(symbols, this);
-        recyclerView.setAdapter(adapter);
     }
 
     @Override
@@ -145,7 +166,6 @@ public class MainActivity extends AppCompatActivity implements SymbolAdapter.OnI
         Intent intent = new Intent(this, SymbolDetailActivity.class);
         intent.putExtra("Symbol", item);
         startActivity(intent);
-
 
 
     }

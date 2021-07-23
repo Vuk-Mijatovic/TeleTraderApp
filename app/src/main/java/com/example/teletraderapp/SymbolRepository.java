@@ -42,6 +42,8 @@ public class SymbolRepository {
         String stockExchangeName;
         String currency;
         String dateAndTime;
+        String decorativeName;
+        String isin;
         double changePercent;
         double bid;
         double ask;
@@ -84,6 +86,19 @@ public class SymbolRepository {
                     currency = currencyNode.getTextContent();
                 } else {
                     currency = "";
+                }
+
+                Node decorativeNameNode = symbolAttributes.getNamedItem("decorativeName");
+                if (decorativeNameNode != null) {
+                    decorativeName = decorativeNameNode.getTextContent();
+                } else {
+                    decorativeName = "";
+                }
+                Node isinNode = symbolAttributes.getNamedItem("isin");
+                if(isinNode != null) {
+                    isin = isinNode.getTextContent();
+                } else {
+                    isin = "";
                 }
 
                 NamedNodeMap quoteAttributes = changeList.item(i).getAttributes();
@@ -145,7 +160,7 @@ public class SymbolRepository {
                 }
                 Symbol symbol = new Symbol(name, chg, last, bid, ask, high, low, tickerSymbol,
                         stockExchangeName, currency,
-                        dateAndTime, changePercent, volume);
+                        dateAndTime, changePercent, volume, decorativeName, isin);
                 list.add(symbol);
             }
         }
