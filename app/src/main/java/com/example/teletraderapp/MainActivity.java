@@ -48,8 +48,6 @@ public class MainActivity extends AppCompatActivity implements SymbolAdapter.OnI
     SymbolsViewModel viewModel;
     RecyclerView recyclerView;
     boolean isChangeLastView;
-    SharedPreferences sharedPref;
-    SharedPreferences.Editor editor;
     TextView changeLabelView;
     TextView lastLabelView;
     public static final int UNSORTED = 0;
@@ -66,8 +64,7 @@ public class MainActivity extends AppCompatActivity implements SymbolAdapter.OnI
         setContentView(R.layout.activity_main);
 
 
-        sharedPref = this.getPreferences(Context.MODE_PRIVATE);
-        editor = sharedPref.edit();
+        SharedPreferences sharedPref = this.getPreferences(Context.MODE_PRIVATE);
         isChangeLastView = sharedPref.getBoolean(LIST_FORMAT, true);
         sortingOrder = sharedPref.getInt(SORTING_ORDER, UNSORTED);
 
@@ -141,10 +138,14 @@ public class MainActivity extends AppCompatActivity implements SymbolAdapter.OnI
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
         List<Symbol> symbols = viewModel.getSymbols().getValue();
+        SharedPreferences sharedPref = this.getPreferences(Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = sharedPref.edit();
 
         switch (item.getItemId()) {
             case R.id.ascending:
                 sortingOrder = ASCENDING;
+
+
                 editor.putInt(SORTING_ORDER, ASCENDING);
                 editor.apply();
                 sortAscending(symbols);
@@ -153,6 +154,7 @@ public class MainActivity extends AppCompatActivity implements SymbolAdapter.OnI
 
             case R.id.descending:
                 sortingOrder = DESCENDING;
+                editor = sharedPref.edit();
                 editor.putInt(SORTING_ORDER, DESCENDING);
                 editor.apply();
                 viewModel.getSymbols().postValue(symbols);
@@ -214,9 +216,6 @@ public class MainActivity extends AppCompatActivity implements SymbolAdapter.OnI
         boolean isConnected = activeNetwork != null &&
                 activeNetwork.isConnectedOrConnecting();
         if (isConnected) {
-
-            ProgressBar progressBar = findViewById(R.id.progressBar);
-            progressBar.setVisibility(View.VISIBLE);
             viewModel.loadSymbols();
         } else {
             Toast.makeText(this, "No internet connection. Please try later.", Toast.LENGTH_SHORT).show();
