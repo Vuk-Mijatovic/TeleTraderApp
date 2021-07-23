@@ -40,10 +40,10 @@ public class SymbolAdapter extends RecyclerView.Adapter<SymbolAdapter.SymbolView
         currentSymbol = symbols.get(position);
         holder.nameView.setText(currentSymbol.getName());
         if (currentSymbol.getChg() != Double.MIN_VALUE) {
-            holder.changeView.setText(String.format("%.2f", (currentSymbol.getChg())) + "%");
-            if (currentSymbol.getChg() > 0) {
+            holder.changeView.setText(String.format("%.2f", (currentSymbol.getChangePercent())) + "%");
+            if (currentSymbol.getChangePercent() > 0) {
                 holder.changeView.setTextColor(Color.parseColor("#1faa00"));
-                holder.changeView.setText("+" + String.format("%.2f", (currentSymbol.getChg())) + "%");
+                holder.changeView.setText("+" + String.format("%.2f", (currentSymbol.getChangePercent())) + "%");
             }
             else if (currentSymbol.getChg() < 0) holder.changeView.setTextColor(Color.RED);
             else holder.changeView.setTextColor(Color.WHITE);
@@ -58,7 +58,7 @@ public class SymbolAdapter extends RecyclerView.Adapter<SymbolAdapter.SymbolView
         holder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                clickListener.onItemClick(currentSymbol);
+                clickListener.onItemClick(symbols.get(position));
             }
         });
     }

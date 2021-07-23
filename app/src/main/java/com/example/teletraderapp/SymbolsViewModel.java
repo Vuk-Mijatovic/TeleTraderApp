@@ -36,7 +36,6 @@ public class SymbolsViewModel extends AndroidViewModel {
             }
         });
         symbols = list.get();
-        String string = "jkjh";
     }
 
     public List<Symbol> getSymbols() {

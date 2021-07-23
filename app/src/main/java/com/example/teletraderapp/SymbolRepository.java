@@ -49,7 +49,7 @@ public class SymbolRepository {
         double last;
         double high;
         double low;
-        long volume;
+        double volume;
         List<Symbol> list = new ArrayList<>();
         SymbolSearchUtil searchUtil = new SymbolSearchUtil();
         String response = searchUtil.makeAHttpRequest();
@@ -86,13 +86,14 @@ public class SymbolRepository {
                     currency = "";
                 }
 
-                Node dateAndTimeNode = symbolAttributes.getNamedItem("dateTime");
+                NamedNodeMap quoteAttributes = changeList.item(i).getAttributes();
+
+                Node dateAndTimeNode = quoteAttributes.getNamedItem("dateTime");
                 if (dateAndTimeNode != null) {
                     dateAndTime = dateAndTimeNode.getTextContent();
                 } else {
                     dateAndTime = "";
                 }
-                NamedNodeMap quoteAttributes = changeList.item(i).getAttributes();
 
                 Node chgNode = quoteAttributes.getNamedItem("change");
                 if (chgNode != null) {
@@ -107,9 +108,8 @@ public class SymbolRepository {
                     changePercent = Double.MIN_VALUE;
                 }
                 Node volumeNode = quoteAttributes.getNamedItem("volume");
-                if(volumeNode != null) {
-                    volume = 12;
-                    //todo see what`s wrong with volume
+                if (volumeNode != null) {
+                    volume = Double.parseDouble(volumeNode.getTextContent());
                 } else {
                     volume = Long.MIN_VALUE;
                 }
@@ -143,7 +143,7 @@ public class SymbolRepository {
                 } else {
                     low = Double.MIN_VALUE;
                 }
-                Symbol symbol = new Symbol(name, chg, last, bid, ask, high, low,tickerSymbol,
+                Symbol symbol = new Symbol(name, chg, last, bid, ask, high, low, tickerSymbol,
                         stockExchangeName, currency,
                         dateAndTime, changePercent, volume);
                 list.add(symbol);

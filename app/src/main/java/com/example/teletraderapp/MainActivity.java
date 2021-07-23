@@ -142,38 +142,9 @@ public class MainActivity extends AppCompatActivity implements SymbolAdapter.OnI
 
     @Override
     public void onItemClick(Symbol item) {
-
-
-        String name = item.getName();
-        String tickerSymbol = item.getTickerSymbol();
-        String stockExchangeName = item.getStockExchangeName();
-        String currency = item.getCurrency();
-        String dateAndTime = item.getDateAndTime();
-        double chg = item.getChg();
-        double last = item.getLast();
-        double bid = item.getBid();
-        double ask = item.getAsk();
-        double high = item.getHigh();
-        double low = item.getLow();
-        double changePercent = item.getChangePercent();
-        long volume = item.getVolume();
-
         Intent intent = new Intent(this, SymbolDetailActivity.class);
-        intent.putExtra("name", name);
-        intent.putExtra("stockExchangeName", stockExchangeName);
-        intent.putExtra("tickerSymbol", tickerSymbol);
-        intent.putExtra("dateAndTime", dateAndTime);
-        intent.putExtra("currency", currency);
-        intent.putExtra("last", last);
-        intent.putExtra("chg", chg);
-        intent.putExtra("bid", bid);
-        intent.putExtra("ask", ask);
-        intent.putExtra("high", high);
-        intent.putExtra("low", low);
-        intent.putExtra("changePercent", changePercent);
-        intent.putExtra("volume", volume);
+        intent.putExtra("Symbol", item);
         startActivity(intent);
-
 
 
 
