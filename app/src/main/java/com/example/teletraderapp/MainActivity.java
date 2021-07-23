@@ -12,6 +12,7 @@ import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.Color;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Bundle;
@@ -19,9 +20,11 @@ import android.os.Handler;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import org.jetbrains.annotations.NotNull;
+import org.w3c.dom.Text;
 import org.xml.sax.SAXException;
 
 import java.io.IOException;
@@ -43,6 +46,19 @@ public class MainActivity extends AppCompatActivity implements SymbolAdapter.OnI
     SwipeRefreshLayout swipeLayout;
     SymbolsViewModel viewModel;
     RecyclerView recyclerView;
+    boolean isChangeLastView;
+    SharedPreferences sharedPref;
+    SharedPreferences.Editor editor;
+    TextView changeLabelView;
+    TextView lastLabelView;
+    public static final int UNSORTED = 0;
+    public static final int ASCENDING = 1;
+    public static final int DESCENDING = 2;
+    public static final String SORTING_ORDER = "Sorting order";
+    public static final String LIST_FORMAT = "List Format";
+    private int sortingOrder = UNSORTED;
+
+
 
 
     @Override
@@ -50,6 +66,19 @@ public class MainActivity extends AppCompatActivity implements SymbolAdapter.OnI
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+
+        sharedPref = this.getPreferences(Context.MODE_PRIVATE);
+        editor = sharedPref.edit();
+        isChangeLastView = sharedPref.getBoolean(LIST_FORMAT, true);
+        sortingOrder = sharedPref.getInt(SORTING_ORDER, UNSORTED);
+
+        changeLabelView = findViewById(R.id.chg_label);
+        lastLabelView = findViewById(R.id.last_header_label);
+
+        if (!isChangeLastView) {
+            changeLabelView.setText("Bid/Ask");
+            lastLabelView.setText("High/Low");
+        }
         ConnectivityManager cm =
                 (ConnectivityManager) getApplicationContext().getSystemService(Context.CONNECTIVITY_SERVICE);
         NetworkInfo activeNetwork = cm.getActiveNetworkInfo();
@@ -66,7 +95,13 @@ public class MainActivity extends AppCompatActivity implements SymbolAdapter.OnI
                 e.printStackTrace();
             }
             symbols = viewModel.getSymbols();
-            adapter = new SymbolAdapter(symbols, this);
+            if (sortingOrder == ASCENDING) {
+                sortAscending(symbols);
+            }
+            if (sortingOrder == DESCENDING) {
+                sortDescending(symbols);
+            }
+            adapter = new SymbolAdapter(symbols, this, isChangeLastView);
             recyclerView = findViewById(R.id.recyclerView);
             LinearLayoutManager layoutManager = new LinearLayoutManager(this);
             recyclerView.setLayoutManager(layoutManager);
@@ -80,11 +115,29 @@ public class MainActivity extends AppCompatActivity implements SymbolAdapter.OnI
                     swipeLayout.setRefreshing(false);
                 }
             });
-        } else Toast.makeText(this, "No internet connection. Please try later.", Toast.LENGTH_SHORT).show();
+        } else
+            Toast.makeText(this, "No internet connection. Please try later.", Toast.LENGTH_SHORT).show();
 
 
+    }
 
-}
+    private void sortDescending(List<Symbol> symbols) {
+        Collections.sort(symbols, new Comparator<Symbol>() {
+            @Override
+            public int compare(Symbol o1, Symbol o2) {
+                return o2.getName().compareToIgnoreCase(o1.getName());
+            }
+        });
+    }
+
+    private void sortAscending(List<Symbol> symbols) {
+        Collections.sort(symbols, new Comparator<Symbol>() {
+            @Override
+            public int compare(Symbol o1, Symbol o2) {
+                return o1.getName().compareToIgnoreCase(o2.getName());
+            }
+        });
+    }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -96,30 +149,50 @@ public class MainActivity extends AppCompatActivity implements SymbolAdapter.OnI
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
         switch (item.getItemId()) {
             case R.id.ascending:
-                Collections.sort(symbols, new Comparator<Symbol>() {
-                    @Override
-                    public int compare(Symbol o1, Symbol o2) {
-                        return o1.getName().compareToIgnoreCase(o2.getName());
-                    }
-                });
+                sortingOrder = ASCENDING;
+                editor.putInt(SORTING_ORDER, ASCENDING);
+                editor.apply();
+                sortAscending(symbols);
                 adapter.notifyDataSetChanged();
-
-
                 break;
+
             case R.id.descending:
-                Collections.sort(symbols, new Comparator<Symbol>() {
-                    @Override
-                    public int compare(Symbol o1, Symbol o2) {
-                        return o2.getName().compareToIgnoreCase(o1.getName());
-                    }
-                });
+                sortingOrder = DESCENDING;
+                editor.putInt(SORTING_ORDER, DESCENDING);
+                editor.apply();
+                sortDescending(symbols);
                 adapter.notifyDataSetChanged();
                 break;
+
             case R.id.unsorted:
+                sortingOrder = UNSORTED;
+                editor.putInt(SORTING_ORDER, UNSORTED);
+                editor.apply();
                 Collections.shuffle(symbols);
                 adapter.notifyDataSetChanged();
+
             case R.id.refresh:
                 refreshData();
+                break;
+
+            case R.id.change_last:
+                isChangeLastView = true;
+                editor.putBoolean(LIST_FORMAT, isChangeLastView);
+                editor.apply();
+                changeLabelView.setText("Chg%");
+                lastLabelView.setText("Last");
+                adapter.setIsChangeLastView(isChangeLastView);
+                adapter.notifyDataSetChanged();
+                break;
+
+            case R.id.bid_ask:
+                isChangeLastView = false;
+                editor.putBoolean(LIST_FORMAT, isChangeLastView);
+                editor.apply();
+                changeLabelView.setText("Bid/Ask");
+                lastLabelView.setText("High/Low");
+                adapter.setIsChangeLastView(isChangeLastView);
+                adapter.notifyDataSetChanged();
                 break;
         }
         return super.onOptionsItemSelected(item);
@@ -154,7 +227,7 @@ public class MainActivity extends AppCompatActivity implements SymbolAdapter.OnI
                 e.printStackTrace();
             }
             symbols = viewModel.getSymbols();
-            adapter = new SymbolAdapter(symbols, this);
+            adapter = new SymbolAdapter(symbols, this, isChangeLastView);
             recyclerView.setAdapter(adapter);
         } else {
             Toast.makeText(this, "No internet connection. Please try later.", Toast.LENGTH_SHORT).show();
@@ -166,8 +239,5 @@ public class MainActivity extends AppCompatActivity implements SymbolAdapter.OnI
         Intent intent = new Intent(this, SymbolDetailActivity.class);
         intent.putExtra("Symbol", item);
         startActivity(intent);
-
-
     }
-    //todo fix chg percent confusion
 }

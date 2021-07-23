@@ -5,8 +5,8 @@
     tools:context=".MainActivity">
     <item
         android:id="@+id/refresh"
-        android:title="Refresh"
         android:icon="@drawable/ic_baseline_refresh_24"
+        android:title="Refresh"
         app:showAsAction="ifRoom" />
 
     <item
@@ -20,6 +20,14 @@
     <item
         android:id="@+id/unsorted"
         android:title="@string/unsorted"
+        app:showAsAction="never" />
+    <item
+        android:id="@+id/change_last"
+        android:title="Chg%, Last"
+        app:showAsAction="never" />
+    <item
+        android:id="@+id/bid_ask"
+        android:title="Bid/Ask, High/Low"
         app:showAsAction="never" />
 
 </menu>

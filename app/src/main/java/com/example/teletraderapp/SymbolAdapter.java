@@ -1,6 +1,5 @@
 package com.example.teletraderapp;
 
-import android.content.Context;
 import android.graphics.Color;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -13,17 +12,19 @@ import androidx.recyclerview.widget.RecyclerView;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
-import java.util.zip.Inflater;
 
 public class SymbolAdapter extends RecyclerView.Adapter<SymbolAdapter.SymbolViewHolder> {
 
     List<Symbol> symbols;
     Symbol currentSymbol;
-    private  OnItemClickListener clickListener;
+    private OnItemClickListener clickListener;
+    boolean isChangeLastView;
 
-    public SymbolAdapter(List<Symbol> symbols, OnItemClickListener clickListener) {
+
+    public SymbolAdapter(List<Symbol> symbols, OnItemClickListener clickListener, boolean isChangeLastView) {
         this.symbols = symbols;
         this.clickListener = clickListener;
+        this.isChangeLastView = isChangeLastView;
     }
 
     @NonNull
@@ -37,24 +38,47 @@ public class SymbolAdapter extends RecyclerView.Adapter<SymbolAdapter.SymbolView
 
     @Override
     public void onBindViewHolder(@NonNull @NotNull SymbolAdapter.SymbolViewHolder holder, int position) {
+
+
         currentSymbol = symbols.get(position);
         holder.nameView.setText(currentSymbol.getName());
-        if (currentSymbol.getChg() != Double.MIN_VALUE) {
-            holder.changeView.setText(String.format("%.2f", (currentSymbol.getChangePercent())) + "%");
-            if (currentSymbol.getChangePercent() > 0) {
-                holder.changeView.setTextColor(Color.parseColor("#1faa00"));
-                holder.changeView.setText("+" + String.format("%.2f", (currentSymbol.getChangePercent())) + "%");
+
+        if (isChangeLastView) {
+            if (currentSymbol.getChg() != Double.MIN_VALUE) {
+                holder.changeView.setText(formatValue(currentSymbol.getChangePercent()) + "%");
+                if (currentSymbol.getChangePercent() > 0) {
+                    holder.changeView.setTextColor(Color.parseColor("#1faa00"));
+                    holder.changeView.setText("+" + formatValue(currentSymbol.getChangePercent()) + "%");
+                } else if (currentSymbol.getChg() < 0) holder.changeView.setTextColor(Color.RED);
+                else holder.changeView.setTextColor(Color.WHITE);
+            } else {
+                holder.changeView.setText("-");
+                holder.changeView.setTextColor(Color.WHITE);
             }
-            else if (currentSymbol.getChg() < 0) holder.changeView.setTextColor(Color.RED);
-            else holder.changeView.setTextColor(Color.WHITE);
-        }
-        else {
-            holder.changeView.setText("-");
+        } else {
             holder.changeView.setTextColor(Color.WHITE);
+            if (currentSymbol.getBid() != Double.MIN_VALUE && currentSymbol.getAsk() != Double.MIN_VALUE) {
+                holder.changeView.setText(formatValue(currentSymbol.getBid())
+                        + "\n" + formatValue(currentSymbol.getAsk()));
+            } else {
+                holder.changeView.setText("-");
+            }
         }
-        if (currentSymbol.getLast() != Double.MIN_VALUE)
-            holder.lastView.setText(String.format("%.2f",(currentSymbol.getLast())));
-        else holder.lastView.setText("-");
+        if (isChangeLastView) {
+            if (currentSymbol.getLast() != Double.MIN_VALUE)
+                holder.lastView.setText(formatValue(currentSymbol.getLast()));
+            else holder.lastView.setText("-");
+        } else {
+            if (currentSymbol.getHigh() != Double.MIN_VALUE && currentSymbol.getLow() != Double.MIN_VALUE) {
+                holder.lastView.setText(formatValue(currentSymbol.getHigh()) + "\n"
+                        + formatValue(currentSymbol.getLow()));
+            } else {
+                holder.lastView.setText("-");
+            }
+
+        }
+
+
         holder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -66,6 +90,14 @@ public class SymbolAdapter extends RecyclerView.Adapter<SymbolAdapter.SymbolView
     @Override
     public int getItemCount() {
         return symbols.size();
+    }
+
+    public void setIsChangeLastView(Boolean isChangeLastView){
+        this.isChangeLastView = isChangeLastView;
+    }
+
+    private String formatValue(double value) {
+        return String.format("%.2f", value);
     }
 
     class SymbolViewHolder extends RecyclerView.ViewHolder {
