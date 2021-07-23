@@ -20,6 +20,8 @@ import android.os.Handler;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -41,7 +43,6 @@ import javax.xml.parsers.ParserConfigurationException;
 
 public class MainActivity extends AppCompatActivity implements SymbolAdapter.OnItemClickListener {
 
-    List<Symbol> symbols = new ArrayList<>();
     SymbolAdapter adapter;
     SwipeRefreshLayout swipeLayout;
     SymbolsViewModel viewModel;
@@ -57,8 +58,6 @@ public class MainActivity extends AppCompatActivity implements SymbolAdapter.OnI
     public static final String SORTING_ORDER = "Sorting order";
     public static final String LIST_FORMAT = "List Format";
     private int sortingOrder = UNSORTED;
-
-
 
 
     @Override
@@ -85,40 +84,34 @@ public class MainActivity extends AppCompatActivity implements SymbolAdapter.OnI
         boolean isConnected = activeNetwork != null &&
                 activeNetwork.isConnectedOrConnecting();
         if (isConnected) {
-
             viewModel = new ViewModelProvider(this).get(SymbolsViewModel.class);
-            try {
-                viewModel.getList();
-            } catch (Exception e) {
-                Toast.makeText(this, "Something went wrong, please try again later.", Toast.LENGTH_SHORT).show();
-                //TODO handle this error more elegantly
-                e.printStackTrace();
-            }
-            symbols = viewModel.getSymbols();
-            if (sortingOrder == ASCENDING) {
-                sortAscending(symbols);
-            }
-            if (sortingOrder == DESCENDING) {
-                sortDescending(symbols);
-            }
-            adapter = new SymbolAdapter(symbols, this, isChangeLastView);
-            recyclerView = findViewById(R.id.recyclerView);
-            LinearLayoutManager layoutManager = new LinearLayoutManager(this);
-            recyclerView.setLayoutManager(layoutManager);
-            new ItemTouchHelper(swipeCallback).attachToRecyclerView(recyclerView);
-            recyclerView.setAdapter(adapter);
-            swipeLayout = findViewById(R.id.swipe_container);
-            swipeLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
-                @Override
-                public void onRefresh() {
-                    refreshData();
-                    swipeLayout.setRefreshing(false);
+            viewModel.getSymbols().observe(this, symbols -> {
+                ProgressBar progressBar = findViewById(R.id.progressBar);
+                progressBar.setVisibility(View.GONE);
+                if (sortingOrder == ASCENDING) {
+                    sortAscending(symbols);
                 }
+                if (sortingOrder == DESCENDING) {
+                    sortDescending(symbols);
+                }
+                adapter = new SymbolAdapter(symbols, this, isChangeLastView);
+                recyclerView = findViewById(R.id.recyclerView);
+                LinearLayoutManager layoutManager = new LinearLayoutManager(this);
+                recyclerView.setLayoutManager(layoutManager);
+                new ItemTouchHelper(swipeCallback).attachToRecyclerView(recyclerView);
+                recyclerView.setAdapter(adapter);
+                swipeLayout = findViewById(R.id.swipe_container);
+                swipeLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+                    @Override
+                    public void onRefresh() {
+                        refreshData();
+                        swipeLayout.setRefreshing(false);
+                    }
+                });
             });
+
         } else
             Toast.makeText(this, "No internet connection. Please try later.", Toast.LENGTH_SHORT).show();
-
-
     }
 
     private void sortDescending(List<Symbol> symbols) {
@@ -147,21 +140,23 @@ public class MainActivity extends AppCompatActivity implements SymbolAdapter.OnI
 
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+        List<Symbol> symbols = viewModel.getSymbols().getValue();
+
         switch (item.getItemId()) {
             case R.id.ascending:
                 sortingOrder = ASCENDING;
                 editor.putInt(SORTING_ORDER, ASCENDING);
                 editor.apply();
                 sortAscending(symbols);
-                adapter.notifyDataSetChanged();
+                viewModel.getSymbols().postValue(symbols);
                 break;
 
             case R.id.descending:
                 sortingOrder = DESCENDING;
                 editor.putInt(SORTING_ORDER, DESCENDING);
                 editor.apply();
+                viewModel.getSymbols().postValue(symbols);
                 sortDescending(symbols);
-                adapter.notifyDataSetChanged();
                 break;
 
             case R.id.unsorted:
@@ -169,7 +164,7 @@ public class MainActivity extends AppCompatActivity implements SymbolAdapter.OnI
                 editor.putInt(SORTING_ORDER, UNSORTED);
                 editor.apply();
                 Collections.shuffle(symbols);
-                adapter.notifyDataSetChanged();
+                viewModel.getSymbols().postValue(symbols);
 
             case R.id.refresh:
                 refreshData();
@@ -206,8 +201,9 @@ public class MainActivity extends AppCompatActivity implements SymbolAdapter.OnI
 
         @Override
         public void onSwiped(@NonNull @NotNull RecyclerView.ViewHolder viewHolder, int direction) {
+            List<Symbol> symbols = viewModel.getSymbols().getValue();
             symbols.remove(viewHolder.getAdapterPosition());
-            adapter.notifyDataSetChanged();
+            viewModel.getSymbols().postValue(symbols);
         }
     };
 
@@ -218,17 +214,10 @@ public class MainActivity extends AppCompatActivity implements SymbolAdapter.OnI
         boolean isConnected = activeNetwork != null &&
                 activeNetwork.isConnectedOrConnecting();
         if (isConnected) {
-            adapter = null;
-            try {
-                viewModel.getList();
-            } catch (Exception e) {
-                Toast.makeText(this, "Something went wrong, please try again later.", Toast.LENGTH_SHORT).show();
-                //TODO handle this error better
-                e.printStackTrace();
-            }
-            symbols = viewModel.getSymbols();
-            adapter = new SymbolAdapter(symbols, this, isChangeLastView);
-            recyclerView.setAdapter(adapter);
+
+            ProgressBar progressBar = findViewById(R.id.progressBar);
+            progressBar.setVisibility(View.VISIBLE);
+            viewModel.loadSymbols();
         } else {
             Toast.makeText(this, "No internet connection. Please try later.", Toast.LENGTH_SHORT).show();
         }
