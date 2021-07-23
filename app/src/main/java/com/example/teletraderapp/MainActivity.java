@@ -34,7 +34,7 @@ import java.util.concurrent.Executors;
 import javax.xml.parsers.ParserConfigurationException;
 
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements SymbolAdapter.OnItemClickListener {
 
     List<Symbol> symbols = new ArrayList<>();
     SymbolAdapter adapter;
@@ -56,7 +56,7 @@ public class MainActivity extends AppCompatActivity {
             e.printStackTrace();
         }
         symbols = viewModel.getSymbols();
-        adapter = new SymbolAdapter(symbols);
+        adapter = new SymbolAdapter(symbols, this);
         recyclerView = findViewById(R.id.recyclerView);
         LinearLayoutManager layoutManager = new LinearLayoutManager(this);
         recyclerView.setLayoutManager(layoutManager);
@@ -136,8 +136,47 @@ public class MainActivity extends AppCompatActivity {
             e.printStackTrace();
         }
         symbols = viewModel.getSymbols();
-        adapter = new SymbolAdapter(symbols);
+        adapter = new SymbolAdapter(symbols, this);
         recyclerView.setAdapter(adapter);
     }
 
+    @Override
+    public void onItemClick(Symbol item) {
+
+
+        String name = item.getName();
+        String tickerSymbol = item.getTickerSymbol();
+        String stockExchangeName = item.getStockExchangeName();
+        String currency = item.getCurrency();
+        String dateAndTime = item.getDateAndTime();
+        double chg = item.getChg();
+        double last = item.getLast();
+        double bid = item.getBid();
+        double ask = item.getAsk();
+        double high = item.getHigh();
+        double low = item.getLow();
+        double changePercent = item.getChangePercent();
+        long volume = item.getVolume();
+
+        Intent intent = new Intent(this, SymbolDetailActivity.class);
+        intent.putExtra("name", name);
+        intent.putExtra("stockExchangeName", stockExchangeName);
+        intent.putExtra("tickerSymbol", tickerSymbol);
+        intent.putExtra("dateAndTime", dateAndTime);
+        intent.putExtra("currency", currency);
+        intent.putExtra("last", last);
+        intent.putExtra("chg", chg);
+        intent.putExtra("bid", bid);
+        intent.putExtra("ask", ask);
+        intent.putExtra("high", high);
+        intent.putExtra("low", low);
+        intent.putExtra("changePercent", changePercent);
+        intent.putExtra("volume", volume);
+        startActivity(intent);
+
+
+
+
+    }
+    //todo fix chg percent confusion
 }

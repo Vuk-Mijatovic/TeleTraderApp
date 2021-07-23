@@ -19,9 +19,11 @@ public class SymbolAdapter extends RecyclerView.Adapter<SymbolAdapter.SymbolView
 
     List<Symbol> symbols;
     Symbol currentSymbol;
+    private  OnItemClickListener clickListener;
 
-    public SymbolAdapter(List<Symbol> symbols) {
+    public SymbolAdapter(List<Symbol> symbols, OnItemClickListener clickListener) {
         this.symbols = symbols;
+        this.clickListener = clickListener;
     }
 
     @NonNull
@@ -53,6 +55,12 @@ public class SymbolAdapter extends RecyclerView.Adapter<SymbolAdapter.SymbolView
         if (currentSymbol.getLast() != Double.MIN_VALUE)
             holder.lastView.setText(String.format("%.2f",(currentSymbol.getLast())));
         else holder.lastView.setText("-");
+        holder.itemView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                clickListener.onItemClick(currentSymbol);
+            }
+        });
     }
 
     @Override
@@ -72,5 +80,9 @@ public class SymbolAdapter extends RecyclerView.Adapter<SymbolAdapter.SymbolView
             this.changeView = itemView.findViewById(R.id.change);
             this.lastView = itemView.findViewById(R.id.last);
         }
+    }
+
+    public interface OnItemClickListener {
+        void onItemClick(Symbol item);
     }
 }

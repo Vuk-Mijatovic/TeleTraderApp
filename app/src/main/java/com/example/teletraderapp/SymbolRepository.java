@@ -38,12 +38,18 @@ public class SymbolRepository {
 
     public List<Symbol> fetchResponse() throws IOException, SAXException, ParserConfigurationException {
         String name;
+        String tickerSymbol;
+        String stockExchangeName;
+        String currency;
+        String dateAndTime;
+        double changePercent;
         double bid;
         double ask;
         double chg;
         double last;
         double high;
         double low;
+        long volume;
         List<Symbol> list = new ArrayList<>();
         SymbolSearchUtil searchUtil = new SymbolSearchUtil();
         String response = searchUtil.makeAHttpRequest();
@@ -61,12 +67,51 @@ public class SymbolRepository {
                 } else {
                     name = "";
                 }
+                Node tickerSymbolNode = symbolAttributes.getNamedItem("tickerSymbol");
+                if (tickerSymbolNode != null) {
+                    tickerSymbol = tickerSymbolNode.getTextContent();
+                } else {
+                    tickerSymbol = "";
+                }
+                Node stockExchangeNameNode = symbolAttributes.getNamedItem("stockExchangeName");
+                if (stockExchangeNameNode != null) {
+                    stockExchangeName = stockExchangeNameNode.getTextContent();
+                } else {
+                    stockExchangeName = "";
+                }
+                Node currencyNode = symbolAttributes.getNamedItem("currency");
+                if (currencyNode != null) {
+                    currency = currencyNode.getTextContent();
+                } else {
+                    currency = "";
+                }
+
+                Node dateAndTimeNode = symbolAttributes.getNamedItem("dateTime");
+                if (dateAndTimeNode != null) {
+                    dateAndTime = dateAndTimeNode.getTextContent();
+                } else {
+                    dateAndTime = "";
+                }
                 NamedNodeMap quoteAttributes = changeList.item(i).getAttributes();
+
                 Node chgNode = quoteAttributes.getNamedItem("change");
                 if (chgNode != null) {
                     chg = Double.parseDouble(chgNode.getTextContent());
                 } else {
                     chg = Double.MIN_VALUE;
+                }
+                Node changePercentNode = quoteAttributes.getNamedItem("changePercent");
+                if (changePercentNode != null) {
+                    changePercent = Double.parseDouble(changePercentNode.getTextContent());
+                } else {
+                    changePercent = Double.MIN_VALUE;
+                }
+                Node volumeNode = quoteAttributes.getNamedItem("volume");
+                if(volumeNode != null) {
+                    volume = 12;
+                    //todo see what`s wrong with volume
+                } else {
+                    volume = Long.MIN_VALUE;
                 }
                 Node lastNode = quoteAttributes.getNamedItem("last");
                 if (chgNode != null) {
@@ -98,7 +143,9 @@ public class SymbolRepository {
                 } else {
                     low = Double.MIN_VALUE;
                 }
-                Symbol symbol = new Symbol(name, chg, last, bid, ask, high, low);
+                Symbol symbol = new Symbol(name, chg, last, bid, ask, high, low,tickerSymbol,
+                        stockExchangeName, currency,
+                        dateAndTime, changePercent, volume);
                 list.add(symbol);
             }
         }
