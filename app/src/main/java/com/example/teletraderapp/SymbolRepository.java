@@ -54,7 +54,7 @@ public class SymbolRepository {
         double volume;
         List<Symbol> list = new ArrayList<>();
         SymbolSearchUtil searchUtil = new SymbolSearchUtil();
-        String response = searchUtil.makeAHttpRequest();
+        String response = searchUtil.makeAHttpRequest(XML_URL);
         if (response != null) {
             DocumentBuilder newDocumentBuilder = DocumentBuilderFactory.newInstance().newDocumentBuilder();
             Document document = newDocumentBuilder.parse(new ByteArrayInputStream(response.getBytes()));

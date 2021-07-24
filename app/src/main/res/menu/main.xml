@@ -29,6 +29,14 @@
         android:id="@+id/bid_ask"
         android:title="Bid/Ask, High/Low"
         app:showAsAction="never" />
+    <item
+        android:id="@+id/info"
+        android:title="info"
+        app:showAsAction="never" />
+    <item
+        android:id="@+id/news"
+        android:title="News"
+        app:showAsAction="never"/>
 
 </menu>
 

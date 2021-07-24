@@ -15,6 +15,7 @@ import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
+import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.util.Log;
@@ -190,6 +191,16 @@ public class MainActivity extends AppCompatActivity implements SymbolAdapter.OnI
                 lastLabelView.setText("High/Low");
                 adapter.setIsChangeLastView(isChangeLastView);
                 adapter.notifyDataSetChanged();
+                break;
+            case R.id.info:
+                String url = "https://drive.google.com/file/d/1J2GZFjQJD9M4cVhtXOKlqHkVdEAGmuCz/view?usp=sharing";
+                Intent i = new Intent(Intent.ACTION_VIEW);
+                i.setData(Uri.parse(url));
+                startActivity(i);
+                break;
+            case R.id.news:
+                Intent newsIntent = new Intent(this, NewsActivity.class);
+                startActivity(newsIntent);
                 break;
         }
         return super.onOptionsItemSelected(item);

@@ -15,9 +15,9 @@ public class SymbolSearchUtil {
     private static final String XML_URL = "https://www.teletrader.rs/downloads/tt_symbol_list.xml";
 
 
-    public static String makeAHttpRequest() throws IOException {
+    public static String makeAHttpRequest(String link) throws IOException {
         String  XMLResponse = "";
-        URL url = new URL(XML_URL);
+        URL url = new URL(link);
         HttpURLConnection urlConnection = null;
         InputStream inputStream = null;
 
